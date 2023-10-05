@@ -58,63 +58,96 @@ where FriendSalary > Salary
 order by FriendSalary asc
 
 ***15 days of learning SQL - Level:Advanced
-WITH daily_sub as 
-    (select a.submission_date,a.hacker_id, 
-     COUNT(a.submission_date) over (partition by a.hacker_id order by a.submission_date ROWS BETWEEN UNBOUNDED PRECEDING and CURRENT ROW ) as total_count,
-    date_order.nr as nr
-        from (SELECT DISTINCT submission_date, hacker_id
-                FROM Submissions) a
-left join 
-    (select submission_date, 
-    ROW_NUMBER() over (order by submission_date) as nr
-    from Submissions
-    group by submission_date
-    ) as date_order
-    on a.submission_date = date_order.submission_date
+-- Calculate daily submissions and align with total day count
+WITH DailySubmissionAndDayCount AS (
+    SELECT 
+        unique_entries.submission_date, 
+        unique_entries.hacker_id,
+        COUNT(unique_entries.submission_date) OVER (
+            PARTITION BY unique_entries.hacker_id 
+            ORDER BY unique_entries.submission_date 
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS total_count,
+        day_order.nr AS day_number
+    FROM (
+        SELECT DISTINCT submission_date, hacker_id
+        FROM Submissions
+    ) AS unique_entries
+    LEFT JOIN (
+        SELECT 
+            submission_date, 
+            ROW_NUMBER() OVER (ORDER BY submission_date) AS nr
+        FROM Submissions
+        GROUP BY submission_date
+    ) AS day_order ON unique_entries.submission_date = day_order.submission_date
 ),
 
-first_part as (
-            select submission_date, COUNT(distinct hacker_id) as total_unique_hacker
-            from daily_sub
-            where total_count = nr
-            group by submission_date
+-- Identify unique hackers with daily submissions
+UniqueDailyHackers AS (
+    SELECT 
+        submission_date, 
+        COUNT(DISTINCT hacker_id) AS total_unique_hacker
+    FROM DailySubmissionAndDayCount
+    WHERE total_count = day_number
+    GROUP BY submission_date
 ),
 
-
-max_sub as (
-            select submission_date, hacker_id, 
-            count(submission_id) as nbr_sub
-            from Submissions
-            group by submission_date, hacker_id
+-- Aggregate submissions by hacker and date
+AggregatedSubmissions AS (
+    SELECT 
+        submission_date, 
+        hacker_id, 
+        COUNT(submission_id) AS submission_count
+    FROM Submissions
+    GROUP BY submission_date, hacker_id
 ),
 
-MaxValueCTE AS (
-                select submission_date,  MAX(nbr_sub) as Max_count
-                from max_sub
-                group by submission_date
+-- Find the maximum submissions for each date
+MaxSubmissionPerDate AS (
+    SELECT 
+        submission_date,  
+        MAX(submission_count) AS max_submission_count
+    FROM AggregatedSubmissions
+    GROUP BY submission_date
 ),
 
-FilteredCTE AS (
-                SELECT s.*,
-                       ROW_NUMBER() OVER (PARTITION BY s.submission_date ORDER BY s.hacker_id ASC) AS rn
-                FROM max_sub s
-                JOIN MaxValueCTE m ON s.submission_date= m.submission_date
-                WHERE s.nbr_sub = m.Max_count
-            ),
-max_sub_all_hacker as (SELECT submission_date, hacker_id
-            FROM FilteredCTE
-            WHERE rn = 1),
+-- Filter hackers with maximum submissions and resolve ties
+TopHackersWithTieResolution AS (
+    SELECT 
+        aggregated.*,
+        ROW_NUMBER() OVER (
+            PARTITION BY aggregated.submission_date 
+            ORDER BY aggregated.hacker_id ASC
+        ) AS row_num
+    FROM AggregatedSubmissions AS aggregated
+    JOIN MaxSubmissionPerDate AS max_values ON aggregated.submission_date = max_values.submission_date
+    WHERE aggregated.submission_count = max_values.max_submission_count
+),
 
+-- Select the top hacker for each date (resolve ties by lowest hacker_id)
+TopHackerPerDate AS (
+    SELECT submission_date, hacker_id
+    FROM TopHackersWithTieResolution
+    WHERE row_num = 1
+),
 
-second_part as (select submission_date, MIN(hacker_id) as lowest_hacker_id
-               from max_sub_all_hacker
-               group by submission_date)
-               
-select first_part.submission_date, first_part.total_unique_hacker, second_part.lowest_hacker_id, Hackers.name
-from first_part
-left join second_part 
-on first_part.submission_date = second_part.submission_date
-left join Hackers
-on second_part.lowest_hacker_id = Hackers.hacker_id
-order by first_part.submission_date
+-- Aggregate by date to find the top hacker with lowest hacker_id
+FinalTopHackers AS (
+    SELECT 
+        submission_date, 
+        MIN(hacker_id) AS top_hacker_id
+    FROM TopHackerPerDate
+    GROUP BY submission_date
+)
+
+-- Final Query: Combine unique daily hackers and top hackers, and join with hacker names
+SELECT 
+    UniqueDailyHackers.submission_date, 
+    UniqueDailyHackers.total_unique_hacker, 
+    FinalTopHackers.top_hacker_id, 
+    Hackers.name
+FROM UniqueDailyHackers
+LEFT JOIN FinalTopHackers ON UniqueDailyHackers.submission_date = FinalTopHackers.submission_date
+LEFT JOIN Hackers ON FinalTopHackers.top_hacker_id = Hackers.hacker_id
+ORDER BY UniqueDailyHackers.submission_date;
 
