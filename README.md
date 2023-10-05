@@ -10,7 +10,9 @@ Sample Input
 ![image](https://github.com/ttng51/SQL-Server/assets/146753832/ca424568-f3dd-499c-bfc7-1ad8de748a56)
 
 Sample Output
-![image](https://github.com/ttng51/SQL-Server/assets/146753832/2204db5a-e818-4c53-95d2-b3c299c8ad6f)
+
+![image](https://github.com/ttng51/SQL-Server/assets/146753832/239b1c64-ac8d-4209-94db-b02783388e01)
+
 
 Explanation
 The first column is an alphabetically ordered list of Doctor names.
