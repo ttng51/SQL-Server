@@ -19,6 +19,7 @@ The repository contains different HackerRank challenges. Inside this folder, you
 * An SQL Solution file containing the solution to the problem.
   1. [Occupations Problem](https://www.hackerrank.com/challenges/occupations/problem)
   2. [Symmetric pairs](https://www.hackerrank.com/challenges/symmetric-pairs)
+  3. [Placements](https://www.hackerrank.com/challenges/placements)
 ## **Contributing**
 Feel free to fork this repository and add your own solutions to SQL challenges!
 
