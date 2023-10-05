@@ -20,6 +20,7 @@ The repository contains different HackerRank challenges. Inside this folder, you
   1. [Occupations Problem](https://www.hackerrank.com/challenges/occupations/problem)
   2. [Symmetric pairs](https://www.hackerrank.com/challenges/symmetric-pairs)
   3. [Placements](https://www.hackerrank.com/challenges/placements)
+  4.  [15 Days of Learning](https://www.hackerrank.com/challenges/15-days-of-learning-sql)
 ## **Contributing**
 Feel free to fork this repository and add your own solutions to SQL challenges!
 
