@@ -1,0 +1,31 @@
+With tab1 as (select 
+       CASE WHEN Occupation = 'Doctor' then Name else NULL end as [Doctor],
+       CASE WHEN Occupation = 'Professor' then Name else NULL end as [Professor],
+       CASE WHEN Occupation = 'Singer' then Name else NULL end as [Singer],
+       CASE WHEN Occupation = 'Actor' then Name else NULL end as [Actor]
+from OCCUPATIONS),
+NumberedRows as (
+    Select 'Doctor' as OcType, Doctor as Occ, ROW_NUMBER() over (Order by Doctor asc) as rn       FROM tab1 
+        where Doctor is not null
+    UNION ALL
+    Select 'Professor'as OcType, [Professor] as Occ,ROW_NUMBER() over (order by [Professor] asc )
+      FROM tab1
+        where Professor is not null
+        UNION ALL
+    Select 'Singer' as OcType, [Singer] as Occ,ROW_NUMBER() over (order by [Singer] asc)
+      FROM tab1
+        where [Singer] is not null
+            UNION ALL
+    Select 'Actor' as OcType, [Actor] as Occ,ROW_NUMBER() over (order by [Actor] asc)
+      FROM tab1
+        where [Actor] is not null
+
+)
+select
+ MAX(CASE WHEN OcType = 'Doctor' THEN Occ END) AS Doc,
+    MAX(CASE WHEN OcType = 'Professor' THEN Occ END) AS Pro,
+    MAX(CASE WHEN OcType = 'Singer' THEN Occ END) AS Sing,
+    MAX(CASE WHEN OcType = 'Actor' THEN Occ END) AS Act
+FROM NumberedRows
+GROUP BY rn
+ORDER BY rn;
