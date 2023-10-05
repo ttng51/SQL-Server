@@ -1,3 +1,4 @@
+** Occupations Problem **
 With tab1 as (select 
        CASE WHEN Occupation = 'Doctor' then Name else NULL end as [Doctor],
        CASE WHEN Occupation = 'Professor' then Name else NULL end as [Professor],
