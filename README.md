@@ -20,3 +20,5 @@ The repository contains different HackerRank challenges. Inside this folder, you
 ## **Contributing**
 Feel free to fork this repository and add your own solutions to SQL challenges!
 
+## **License**
+This project is licensed under the MIT License - see the LICENSE.md file for details.
