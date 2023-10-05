@@ -10,9 +10,7 @@ Sample Input
 ![image](https://github.com/ttng51/SQL-Server/assets/146753832/ca424568-f3dd-499c-bfc7-1ad8de748a56)
 
 Sample Output
-Jenny    Ashley     Meera  Jane
-Samantha Christeen  Priya  Julia
-NULL     Ketty      NULL   Maria
+![image](https://github.com/ttng51/SQL-Server/assets/146753832/2204db5a-e818-4c53-95d2-b3c299c8ad6f)
 
 Explanation
 The first column is an alphabetically ordered list of Doctor names.
