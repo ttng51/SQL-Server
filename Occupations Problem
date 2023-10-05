@@ -4,6 +4,7 @@ With tab1 as (select
        CASE WHEN Occupation = 'Singer' then Name else NULL end as [Singer],
        CASE WHEN Occupation = 'Actor' then Name else NULL end as [Actor]
 from OCCUPATIONS),
+
 NumberedRows as (
     Select 'Doctor' as OcType, Doctor as Occ, ROW_NUMBER() over (Order by Doctor asc) as rn       FROM tab1 
         where Doctor is not null
