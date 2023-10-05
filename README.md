@@ -6,12 +6,13 @@ The OCCUPATIONS table is described as follows:
 ![image](https://github.com/ttng51/SQL-Server/assets/146753832/b016b0ba-53d6-4262-ae2b-e6114696b10f)
 
 Occupation will only contain one of the following values: Doctor, Professor, Singer or Actor.
+
 Sample Input
 ![image](https://github.com/ttng51/SQL-Server/assets/146753832/ca424568-f3dd-499c-bfc7-1ad8de748a56)
 
 Sample Output
 
-![image](https://github.com/ttng51/SQL-Server/assets/146753832/239b1c64-ac8d-4209-94db-b02783388e01)
+![image](https://github.com/ttng51/SQL-Server/assets/146753832/542f76b5-d779-4d7b-8497-c3b93c506a72)
 
 
 Explanation
