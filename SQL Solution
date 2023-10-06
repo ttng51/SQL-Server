@@ -151,3 +151,24 @@ LEFT JOIN FinalTopHackers ON UniqueDailyHackers.submission_date = FinalTopHacker
 LEFT JOIN Hackers ON FinalTopHackers.top_hacker_id = Hackers.hacker_id
 ORDER BY UniqueDailyHackers.submission_date;
 
+*** SQL Project Planning - Level: Medium ***
+WITH TaskWindow AS (
+    SELECT 
+        Start_Date,
+        End_Date,
+        LEAD(Start_Date, 1) OVER (ORDER BY Start_Date ASC) AS Next_Start_Date,
+        LAG(End_Date, 1) OVER (ORDER BY End_Date ASC) AS Previous_End_Date,
+        ROW_NUMBER() OVER (ORDER BY Start_Date ASC) AS RowNum
+    FROM Projects
+),
+AggregatedProjects AS (
+    SELECT 
+        MIN(Start_Date) AS Project_Start_Date,
+        MAX(End_Date) AS Project_End_Date
+    FROM TaskWindow
+    GROUP BY DATEDIFF(day, RowNum, Start_Date)
+)
+SELECT *
+FROM AggregatedProjects
+ORDER BY DATEDIFF(day, Project_Start_Date, Project_End_Date) ASC, Project_Start_Date ASC;
+
